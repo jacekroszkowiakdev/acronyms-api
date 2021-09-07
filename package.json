@@ -1,14 +1,23 @@
 {
-  "name": "acronyms-api",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.17.1"
-  }
+    "name": "acronyms-api",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node ./bin/www",
+        "devstart": "nodemon ./bin/www",
+        "serverstart": "DEBUG=acronyms-api:* npm run devstart",
+        "watch": "nodemon ./app.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "debug": "^4.3.2",
+        "express": "^4.17.1",
+        "http-errors": "^1.8.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.12"
+    }
 }
