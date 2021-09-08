@@ -4,20 +4,19 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node ./bin/www",
-        "devstart": "nodemon ./bin/www",
-        "serverstart": "DEBUG=acronyms-api:* npm run devstart",
-        "watch": "nodemon ./app.js"
+        "devstart": "nodemon ./app.js"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
         "debug": "^4.3.2",
         "express": "^4.17.1",
-        "http-errors": "^1.8.0"
+        "http-errors": "^1.8.0",
+        "mongoose": "^6.0.5"
     },
     "devDependencies": {
+        "dotenv": "^10.0.0",
         "nodemon": "^2.0.12"
     }
 }
