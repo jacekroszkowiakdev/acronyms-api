@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
 });
 
 const appRouter = require("./routes/acronyms");
-app.use("/test", appRouter);
+app.use("/acronyms", appRouter);
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}!`);
