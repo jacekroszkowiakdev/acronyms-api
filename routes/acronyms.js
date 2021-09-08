@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const Acronym = require("../models/acronym");
 
 // 1.
 // GET /acronym?from=50&limit=10&search=:search
@@ -13,8 +14,13 @@ router.get("/acronym?from=50&limit=10&search=:search", (req, res) => {
 // 2.
 // GET /acronym/:acronym
 // ▶ returns the acronym and definition matching :acronym
-router.get("/acronym/:acronym", (req, res) => {
-    res.send("get definition");
+router.get("/acronym/:acronym", async (req, res) => {
+    try {
+        const acronym = await Acronym.find();
+        res.json(acronym);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
 // 3.

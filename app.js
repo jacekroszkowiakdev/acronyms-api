@@ -23,6 +23,7 @@ app.get("/", (req, res) => {
 
 const appRouter = require("./routes/acronyms");
 app.use("/acronyms", appRouter);
+//localhost:3000/acronyms
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}!`);

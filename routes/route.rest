@@ -1,1 +1,12 @@
-GET http://localhost:3000/acronyms/
+GET http://localhost:3000/acronyms/acronym?from=50&limit=10&search=:search
+
+// checked and working:
+DELETE http://localhost:3000/acronyms/acronym/:acronym
+###
+PATCH http://localhost:3000/acronyms/acronym/:acronym
+###
+POST http://localhost:3000/acronyms/acronym
+###
+GET http://localhost:3000/acronyms/random/:count?
+###
+GET http://localhost:3000/acronyms/acronym/:acronym
