@@ -13,13 +13,30 @@ router.get("/hydrate", async (req, res) => {
     }
 });
 
+// get all
+router.get("/", async (req, res) => {
+    try {
+        const acronyms = await Acronym.find();
+        res.json(acronyms);
+        res.status(200).json({ message: "all entries downloaded" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // 1.
 // GET /acronym?from=50&limit=10&search=:search
 // ▶ returns a list of acronyms, paginated using query parameters
 // ▶ response headers indicate if there are more results
 // ▶ returns all acronyms that fuzzy match against :search
 router.get("/acronym?from=50&limit=10&search=:search", (req, res) => {
-    res.send("get paginated");
+    // try {
+    //     const acronyms = await Acronym.find();
+    //     res.json(acronyms);
+    //     res.status(200).json({ message: "paginated" });
+    // } catch (err) {
+    //     res.status(500).json({ message: err.message });
+    // }
 });
 
 // Methods and query helpers
@@ -30,12 +47,12 @@ router.get("/acronym?from=50&limit=10&search=:search", (req, res) => {
 // GET /acronym/:acronym
 // ▶ returns the acronym and definition matching :acronym
 router.get("/acronym/:acronym", async (req, res) => {
-    try {
-        const acronym = await Acronym.find();
-        res.json(acronym);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+    // try {
+    //     const acronym = await Acronym.find();
+    //     res.json(acronym);
+    // } catch (err) {
+    //     res.status(500).json({ message: err.message });
+    // }
 });
 
 // 3.
@@ -51,7 +68,17 @@ router.get("/random/:count?", (req, res) => {
 // ▶ receives an acronym and definition strings
 // ▶ adds the acronym definition to the db
 router.post("/acronym", (req, res) => {
-    res.send("post definition");
+    const newAcronymEntry = new Acronym({
+        acronym: req.body.acronym,
+        fullForm: req.body.fullForm,
+    });
+    try {
+        const newAcronym = newAcronymEntry.save();
+        res.status(201).json(newAcronym);
+        res.send("DB updated with new acronym and definition");
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
 });
 
 // 5.
