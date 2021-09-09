@@ -16,7 +16,7 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/acronyms/random/:count?
 ###
-GET http://localhost:3000/acronyms/acronym/:acronym
+GET http://localhost:3000/acronyms/acronym/:TDAdDB
 ###
 GET http://localhost:3000/acronyms/hydrate
 ###

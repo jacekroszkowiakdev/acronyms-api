@@ -3,6 +3,21 @@ const router = express.Router();
 const Acronym = require("../models/acronym");
 const hydrate = require("./hydrate");
 
+// get single entry
+const getEntry = async (req, res, next) => {
+    let entry;
+    try {
+        const entry = await Acronym.find(req.params.acronym);
+        if (!entry) {
+            return res.status(404).json({ message: "Entry does not exists" });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+    res.acronym = entry;
+    next();
+};
+
 // hydrate
 router.get("/hydrate", async (req, res) => {
     try {
@@ -46,7 +61,8 @@ router.get("/acronym?from=50&limit=10&search=:search", (req, res) => {
 // 2.
 // GET /acronym/:acronym
 // ▶ returns the acronym and definition matching :acronym
-router.get("/acronym/:acronym", async (req, res) => {
+router.get("/acronym/:acronym", getEntry, async (req, res) => {
+    res.json(res.acronym);
     // try {
     //     const acronym = await Acronym.find();
     //     res.json(acronym);
@@ -75,7 +91,6 @@ router.post("/acronym", (req, res) => {
     try {
         const newAcronym = newAcronymEntry.save();
         res.status(201).json(newAcronym);
-        res.send("DB updated with new acronym and definition");
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -86,7 +101,18 @@ router.post("/acronym", (req, res) => {
 // ▶ receives an acronym and definition strings
 // ▶ uses an authorization header to ensure acronyms are protected
 // ▶ updates the acronym definition to the db for :acronym
-router.patch("/acronym/:acronym", (req, res) => {
+router.patch("/acronym/:acronym", getEntry, (req, res) => {
+    const newAcronymEntry = new Acronym({
+        acronym: req.body.acronym,
+        fullForm: req.body.fullForm,
+    });
+    try {
+        const newAcronym = newAcronymEntry.save();
+        res.status(201).json(newAcronym);
+        res.send("Acronym definition updated");
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
     res.send("update definition");
 });
 
@@ -94,8 +120,6 @@ router.patch("/acronym/:acronym", (req, res) => {
 // DELETE /acronym/:acronym
 // ▶ deletes :acronym
 // ▶ uses an authorization header to ensure acronyms are protected
-router.delete("/acronym/:acronym", (req, res) => {
-    res.send("delete definition");
-});
+router.delete("/acronym/:acronym", getEntry, (req, res) => {});
 
 module.exports = router;
