@@ -1,6 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const Acronym = require("../models/acronym");
+const hydrate = require("./hydrate");
+
+// hydrate
+router.get("/hydrate", async (req, res) => {
+    try {
+        await hydrate();
+        res.status(200).json({ message: "DB hydrated!" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 
 // 1.
 // GET /acronym?from=50&limit=10&search=:search
@@ -10,6 +21,10 @@ const Acronym = require("../models/acronym");
 router.get("/acronym?from=50&limit=10&search=:search", (req, res) => {
     res.send("get paginated");
 });
+
+// Methods and query helpers
+
+// A schema can also have instance methods, static methods, and query helpers. The instance and static methods are similar, but with the obvious difference that an instance method is associated with a particular record and has access to the current object. Query helpers allow you to extend mongoose's chainable query builder API (for example, allowing you to add a query "byName" in addition to the find(), findOne() and findById() methods).
 
 // 2.
 // GET /acronym/:acronym
