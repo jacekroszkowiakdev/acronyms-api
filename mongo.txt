@@ -1,0 +1,13 @@
+mongo "mongodb+srv://cluster0.ntgtt.mongodb.net/myFirstDatabase" --username acronymsUser
+
+commands:
+ db.acronyms.remove({})
+db.acronyms.dropIndexes("*")
+db.acronyms.remove({})
+db.acronyms.find().count()
+db.acronyms.find().pretty()
+ db.acronyms.find()
+show collections
+use acronyms
+show dbs
+db.getCollectionNames()
