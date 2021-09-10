@@ -1,24 +1,25 @@
 GET http://localhost:3000/acronyms/acronym?from=50&limit=10&search=:search
 ###
-DELETE http://localhost:3000/acronyms/acronym/:acronym
+DELETE http://localhost:3000/acronyms/acronym/10X
 ###
 PATCH http://localhost:3000/acronyms/acronym/:acronym
 ###
 GET http://localhost:3000/acronyms/random/:count?
-###
-GET http://localhost:3000/acronyms/acronym/10X
 
 
 //WORKING FINE:
+###
+GET http://localhost:3000/acronyms/acronym/ROFLMAO
 ###
 GET http://localhost:3000/acronyms/hydrate
 ###
 GET http://localhost:3000/acronyms/
 ###
-POST http://localhost:3000/acronyms/acronym
+POST http://localhost:3000/acronyms/acronym/
 Content-Type: application/json
+
 {
-    "acronym": "TDAdDB",
-    "fullForm": "Test Dodawania Akronimu do DB"
+    "acronym": "TDAdDB1",
+    "fullForm": "Test Dodawania Akronimu do DB1"
 }
 

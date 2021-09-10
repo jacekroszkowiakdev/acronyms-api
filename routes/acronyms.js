@@ -6,17 +6,16 @@ const hydrate = require("./hydrate");
 // get single entry helper
 const getEntry = async (req, res) => {
     let entry;
-    console.log(req);
     try {
-        entry = await Acronym.find({}, { acronym: `${req.params.acronym}` });
-        console.log(req.params.acronym);
+        entry = await Acronym.find({ acronym: `${req.params.acronym}` });
         if (!entry) {
             return res.status(404).json({ message: "Entry does not exists" });
         }
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
-    res.send(entry);
+    res.acronym = res.send(entry);
+    // console.log(res.acronym);
 };
 
 // hydrate DB
@@ -35,11 +34,13 @@ router.get("/", async (req, res) => {
         const acronyms = await Acronym.find();
         res.json(acronyms);
         res.status(200).json({ message: "all entries downloaded" });
-        console.log("all entries downloaded");
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
+
+// GET /acronym/:acronym
+router.get("/acronym/:acronym", getEntry);
 
 // GET /acronym?from=50&limit=10&search=:search
 // ▶ returns a list of acronyms, paginated using query parameters
@@ -55,10 +56,6 @@ router.get("/acronym?from=50&limit=10&search=:search", (req, res) => {
     // }
 });
 
-// GET /acronym/:acronym
-// ▶ returns the acronym and definition matching :acronym
-router.get("/acronym/:acronym", getEntry);
-
 // GET /random/:count?
 // ▶ returns :count random acronyms
 // ▶ the acronyms returned should not be adjacent rows from the data
@@ -67,8 +64,6 @@ router.get("/random/:count?", (req, res) => {
 });
 
 // POST /acronym
-// ▶ receives an acronym and definition strings
-// ▶ adds the acronym definition to the db
 router.post("/acronym", (req, res) => {
     const newAcronymEntry = new Acronym({
         acronym: req.body.acronym,
@@ -87,23 +82,27 @@ router.post("/acronym", (req, res) => {
 // ▶ uses an authorization header to ensure acronyms are protected
 // ▶ updates the acronym definition to the db for :acronym
 router.patch("/acronym/:acronym", getEntry, (req, res) => {
-    const newAcronymEntry = new Acronym({
-        acronym: req.body.acronym,
-        fullForm: req.body.fullForm,
-    });
-    try {
-        const newAcronym = newAcronymEntry.save();
-        res.status(201).json(newAcronym);
-        res.send("Acronym definition updated");
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-    res.send("update definition");
+    // const newAcronymEntry = new Acronym({
+    //     acronym: req.body.acronym,
+    //     fullForm: req.body.fullForm,
+    // });
+    // try {
+    //     const newAcronym = newAcronymEntry.save();
+    //     res.status(201).json(newAcronym);
+    //     res.send("Acronym definition updated");
+    // } catch (err) {
+    //     res.status(400).json({ message: err.message });
+    // }
+    // res.send("update definition");
 });
 
 // DELETE /acronym/:acronym
 // ▶ deletes :acronym
 // ▶ uses an authorization header to ensure acronyms are protected
 router.delete("/acronym/:acronym", getEntry, (req, res) => {});
-
+try {
+    // await entry.remove();
+} catch (err) {
+    res.status(500).json({ message: err.message });
+}
 module.exports = router;
