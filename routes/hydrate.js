@@ -16,7 +16,6 @@ const countEntries = async () => {
     });
 };
 
-// refactor to async await
 const hydrate = async () => {
     const entries = await countEntries();
     if (entries) {

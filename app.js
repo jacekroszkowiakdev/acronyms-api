@@ -11,17 +11,9 @@ db.on("error", (err) => console.error(err));
 db.once("open", () => console.log("connected to DB"));
 
 // Middleware
-const createError = require("http-errors");
-const debug = require("debug");
 app.use(express.json());
 
-// routes:
-
-app.get("/", (req, res) => {
-    res.send("I am a server!");
-});
-
-const appRouter = require("./routes/acronyms");
+const appRouter = require("./routes/acronyms/routes");
 app.use("/acronyms", appRouter);
 //localhost:3000/acronyms
 

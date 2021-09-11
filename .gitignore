@@ -5,3 +5,6 @@
 
 # pdf
 *.pdf
+
+# txt
+mongo.txt
