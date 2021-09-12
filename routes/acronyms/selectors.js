@@ -3,6 +3,8 @@ const Acronym = require("../../models/acronym");
 module.exports.getAcronym = async (acronymPrefix) =>
     await Acronym.findOne({ acronym: acronymPrefix });
 
+module.exports.listAcronyms = async () => await Acronym.find();
+
 module.exports.createAcronym = async (acronym, fullForm) => {
     const entry = new Acronym({
         acronym,

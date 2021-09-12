@@ -1,7 +1,6 @@
-GET http://localhost:3000/acronyms/list?from=50&limit=10&search=:search
+GET http://localhost:3000/acronyms/list?from=50&limit=10&search=10X
 
-###
-GET http://localhost:3000/acronyms/random/count?sample=8
+
 ###
 POST http://localhost:3000/acronyms/login
 
@@ -15,6 +14,9 @@ GET http://localhost:3000/acronyms/hydrate
 
 ###
 GET http://localhost:3000/acronyms/TDAdDB
+
+###
+GET http://localhost:3000/acronyms/random/count?sample=5
 
 ###
 POST http://localhost:3000/acronyms/

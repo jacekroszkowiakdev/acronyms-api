@@ -6,6 +6,7 @@ const hydrate = require("../hydrate");
 const {
     createAcronym,
     getAcronym,
+    listAcronyms,
     updateDefinition,
     deleteAcronym,
 } = require("./selectors");
@@ -51,7 +52,7 @@ router.post("/", async (req, res) => {
 // GET /
 router.get("/", async (req, res) => {
     try {
-        const acronyms = await Acronym.find();
+        const acronyms = await listAcronyms();
         res.json(acronyms);
         res.status(200).json({ message: "all entries downloaded" });
     } catch (err) {
@@ -68,23 +69,35 @@ router.get("/:acronym", getEntry, async (req, res) => {
 // ▶ returns a list of acronyms, paginated using query parameters
 // ▶ response headers indicate if there are more results
 // ▶ returns all acronyms that fuzzy match against :search
-router.get("/list?from=50&limit=10&search=:search", (req, res) => {
-    // try {
-    //     const acronyms = await Acronym.find();
-    //     res.json(acronyms);
-    //     res.status(200).json({ message: "paginated" });
-    // } catch (err) {
-    //     res.status(500).json({ message: err.message });
-    // }
+router.get("/list?from=50&limit=10&search=:search", async (req, res) => {
+    let limit = parseInt(req.query.limit);
+    let startIdex = parseInt(req.query.from);
+    let endIdex = parseInt(req.query.from + limit);
+    let searchQuery = req.query.search;
+    // fuzzySearch = searchQuery.fuzziness(1);
+
+    try {
+        console.log(limit);
+        console.log(startIdex);
+        console.log(endIdex);
+        console.log(searchQuery);
+        // const acronyms = await Acronym.find();
+        const acronyms = await listAcronyms();
+        // const acronymsPaginated = acronyms.slice(startIdex, endIdex);
+        res.json(acronyms);
+        res.status(200).json({ message: "all entries downloaded" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
 // GET /random/:count?
 router.get("/random/:count?", async (req, res) => {
     try {
-        let sampleSize = req.query.sample;
+        let sampleSize = parseInt(req.query.sample);
         console.log(sampleSize);
         const randomAcronyms = await Acronym.aggregate([
-            { $sample: { size: parseFloat(sampleSize) } },
+            { $sample: { size: sampleSize } },
         ]);
         res.json(randomAcronyms);
         res.status(200).json({ message: "Random DB entries downloaded" });
