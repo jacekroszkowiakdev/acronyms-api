@@ -85,7 +85,7 @@ router.get("/list/acronym", async (req, res) => {
         console.log(endIdex);
         console.log(searchQuery);
         const acronyms = await Acronym.find()
-            .sort(searchQuery, 1)
+            .sort(searchQuery)
             .skip(startIdex)
             .limit(limit)
             .exec()
