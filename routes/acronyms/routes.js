@@ -3,7 +3,12 @@ const router = express.Router();
 const Acronym = require("../../models/acronym");
 const Users = require("../../models/users");
 const hydrate = require("../hydrate");
-const { createAcronym, getAcronym, deleteAcronym } = require("./selectors");
+const {
+    createAcronym,
+    getAcronym,
+    updateDefinition,
+    deleteAcronym,
+} = require("./selectors");
 
 // get single entry helper
 const getEntry = async (req, res, next) => {
@@ -48,19 +53,6 @@ router.get("/:acronym", getEntry, async (req, res) => {
     await res.send(res.acronym);
 });
 
-// router.get("/:acronym", async (req, res) => {
-//     let entry;
-//     try {
-//         entry = await listAcronyms(req.params.acronym);
-//         console.log(entry);
-//         if (!entry) {
-//             return res.status(404).json({ message: "Entry does not exists" });
-//         } else res.status(200).json(entry);
-//     } catch (err) {
-//         return res.status(500).json({ message: err.message });
-//     }
-// });
-
 // GET /acronym?from=50&limit=10&search=:search
 // ▶ returns a list of acronyms, paginated using query parameters
 // ▶ response headers indicate if there are more results
@@ -87,17 +79,18 @@ router.get("/random/:count?", (req, res) => {
 // ▶ uses an authorization header to ensure acronyms are protected
 // ▶ updates the acronym definition to the db for :acronym
 router.put("/:acronym", getEntry, async (req, res) => {
-    const newAcronymEntry = new Acronym({
-        acronym: req.body.acronym,
-        fullForm: req.body.fullForm,
-    });
+    let entry;
     try {
-        const newAcronym = newAcronymEntry.save();
-        res.status(201).json(newAcronym);
-        res.send("Acronym definition updated");
+        entry = await updateDefinition(req.params, req.body);
+        if (entry === null) {
+            return res
+                .status(404)
+                .json({ message: "Entry does not exists in DB" });
+        }
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        return res.status(500).json({ message: err.message });
     }
+    res.send("Acronym definition updated");
 });
 
 // DELETE /:acronym
@@ -105,8 +98,10 @@ router.delete("/:acronym", async (req, res) => {
     let entry;
     try {
         entry = await deleteAcronym(req.params.acronym);
-        if (!entry) {
-            return res.status(404).json({ message: "Entry does not exists" });
+        if (entry === null) {
+            return res
+                .status(404)
+                .json({ message: "Entry does not exists in DB" });
         }
     } catch (err) {
         return res.status(500).json({ message: err.message });

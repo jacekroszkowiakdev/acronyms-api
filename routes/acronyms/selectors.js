@@ -12,5 +12,9 @@ module.exports.createAcronym = async (acronym, fullForm) => {
     return entry;
 };
 
+module.exports.updateDefinition = async (acronymPrefix, newDefinition) => {
+    await Acronym.findOneAndUpdate(acronymPrefix, newDefinition);
+};
+
 module.exports.deleteAcronym = async (acronymString) =>
     await Acronym.findOneAndDelete({ acronym: acronymString });

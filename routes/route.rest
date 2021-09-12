@@ -1,11 +1,4 @@
 GET http://localhost:3000/acronyms/list?from=50&limit=10&search=:search
-###
-PUT http://localhost:3000/acronyms/:acronym
-
-{
-    "acronym": "TDAdDB2001",
-    "fullForm": "Updated"
-}
 
 ###
 GET http://localhost:3000/acronyms/random/:count?
@@ -21,15 +14,23 @@ GET http://localhost:3000/acronyms/
 GET http://localhost:3000/acronyms/hydrate
 
 ###
-GET http://localhost:3000/acronyms/TDAdDB2005
+GET http://localhost:3000/acronyms/TDAdDB3
 
 ###
 POST http://localhost:3000/acronyms/
 Content-Type: application/json
 
 {
-    "acronym": "TDAdDB2001",
-    "fullForm": "Test Dodawania Akronimu do DB1"
+    "acronym": "TDAdDB",
+    "fullForm": "Before update"
+}
+
+###
+PUT http://localhost:3000/acronyms/TDAdDB
+Content-Type: application/json
+
+{
+    "fullForm": "Test Dodawania Akronimu do DB (updated)"
 }
 
 ###
