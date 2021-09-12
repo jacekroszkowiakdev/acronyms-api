@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const Acronym = require("../models/acronym");
 const data = require("../acronyms.json");
 
-// refactor to async await
 const countEntries = async () => {
     return new Promise((resolve, reject) => {
         Acronym.countDocuments((err, count) => {

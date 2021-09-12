@@ -5,6 +5,9 @@ module.exports.getAcronym = async (acronymPrefix) =>
 
 module.exports.listAcronyms = async () => await Acronym.find();
 
+module.exports.paginateAcronyms = async (acronymPrefix) =>
+    await Acronym.find({ acronym: acronymPrefix });
+
 module.exports.createAcronym = async (acronym, fullForm) => {
     const entry = new Acronym({
         acronym,

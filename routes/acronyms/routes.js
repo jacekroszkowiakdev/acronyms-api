@@ -7,6 +7,7 @@ const {
     createAcronym,
     getAcronym,
     listAcronyms,
+    paginateAcronyms,
     updateDefinition,
     deleteAcronym,
 } = require("./selectors");
@@ -69,23 +70,29 @@ router.get("/:acronym", getEntry, async (req, res) => {
 // ▶ returns a list of acronyms, paginated using query parameters
 // ▶ response headers indicate if there are more results
 // ▶ returns all acronyms that fuzzy match against :search
-router.get("/list?from=50&limit=10&search=:search", async (req, res) => {
+// router.get("/acronym?", async (req, res) => {
+router.get("/list/acronym", async (req, res) => {
     let limit = parseInt(req.query.limit);
     let startIdex = parseInt(req.query.from);
     let endIdex = parseInt(req.query.from + limit);
     let searchQuery = req.query.search;
-    // fuzzySearch = searchQuery.fuzziness(1);
+    fuzzySearch = searchQuery;
 
     try {
+        console.log(req.params);
         console.log(limit);
         console.log(startIdex);
         console.log(endIdex);
         console.log(searchQuery);
-        // const acronyms = await Acronym.find();
-        const acronyms = await listAcronyms();
-        // const acronymsPaginated = acronyms.slice(startIdex, endIdex);
+        const acronyms = await Acronym.find()
+            .sort(searchQuery, 1)
+            .skip(startIdex)
+            .limit(limit)
+            .exec()
+            .next();
         res.json(acronyms);
-        res.status(200).json({ message: "all entries downloaded" });
+        res.status(200).json({ message: "Search results paginated" });
+        res.send("hello!");
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -95,7 +102,6 @@ router.get("/list?from=50&limit=10&search=:search", async (req, res) => {
 router.get("/random/:count?", async (req, res) => {
     try {
         let sampleSize = parseInt(req.query.sample);
-        console.log(sampleSize);
         const randomAcronyms = await Acronym.aggregate([
             { $sample: { size: sampleSize } },
         ]);
