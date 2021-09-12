@@ -21,7 +21,7 @@ GET http://localhost:3000/acronyms/
 GET http://localhost:3000/acronyms/hydrate
 
 ###
-GET http://localhost:3000/acronyms/TDAdDB2001
+GET http://localhost:3000/acronyms/TDAdDB2005
 
 ###
 POST http://localhost:3000/acronyms/

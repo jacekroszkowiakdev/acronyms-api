@@ -3,14 +3,14 @@ const router = express.Router();
 const Acronym = require("../../models/acronym");
 const Users = require("../../models/users");
 const hydrate = require("../hydrate");
-const { createAcronym, listAcronyms, deleteAcronym } = require("./selectors");
+const { createAcronym, getAcronym, deleteAcronym } = require("./selectors");
 
 // get single entry helper
 const getEntry = async (req, res, next) => {
     let entry;
     try {
-        entry = await listAcronyms(req.params.acronym);
-        if (!entry) {
+        entry = await getAcronym(req.params.acronym);
+        if (entry === null) {
             return res.status(404).json({ message: "Entry does not exists" });
         }
     } catch (err) {
@@ -43,34 +43,23 @@ router.post("/", async (req, res) => {
     }
 });
 
-// get all entries
-router.get("/", async (req, res) => {
-    try {
-        const acronyms = await Acronym.find();
-        res.json(acronyms);
-        res.status(200).json({ message: "all entries downloaded" });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
 // GET /:acronym
-// router.get("/:acronym", getEntry, async (req, res) => {
-//     await res.send(res.acronym);
-// });
-
-router.get("/:acronym", async (req, res) => {
-    let entry;
-    try {
-        entry = await listAcronyms(req.params.acronym);
-        console.log(entry);
-        if (!entry) {
-            return res.status(404).json({ message: "Entry does not exists" });
-        } else res.status(200).json(entry);
-    } catch (err) {
-        return res.status(500).json({ message: err.message });
-    }
+router.get("/:acronym", getEntry, async (req, res) => {
+    await res.send(res.acronym);
 });
+
+// router.get("/:acronym", async (req, res) => {
+//     let entry;
+//     try {
+//         entry = await listAcronyms(req.params.acronym);
+//         console.log(entry);
+//         if (!entry) {
+//             return res.status(404).json({ message: "Entry does not exists" });
+//         } else res.status(200).json(entry);
+//     } catch (err) {
+//         return res.status(500).json({ message: err.message });
+//     }
+// });
 
 // GET /acronym?from=50&limit=10&search=:search
 // ▶ returns a list of acronyms, paginated using query parameters
