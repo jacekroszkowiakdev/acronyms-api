@@ -48,6 +48,17 @@ router.post("/", async (req, res) => {
     }
 });
 
+// GET /
+router.get("/", async (req, res) => {
+    try {
+        const acronyms = await Acronym.find();
+        res.json(acronyms);
+        res.status(200).json({ message: "all entries downloaded" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // GET /:acronym
 router.get("/:acronym", getEntry, async (req, res) => {
     await res.send(res.acronym);
@@ -68,10 +79,18 @@ router.get("/list?from=50&limit=10&search=:search", (req, res) => {
 });
 
 // GET /random/:count?
-// ▶ returns :count random acronyms
-// ▶ the acronyms returned should not be adjacent rows from the data
-router.get("/random/:count?", (req, res) => {
-    res.send("get random count");
+router.get("/random/:count?", async (req, res) => {
+    try {
+        let sampleSize = req.query.sample;
+        console.log(sampleSize);
+        const randomAcronyms = await Acronym.aggregate([
+            { $sample: { size: parseFloat(sampleSize) } },
+        ]);
+        res.json(randomAcronyms);
+        res.status(200).json({ message: "Random DB entries downloaded" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
 // PUT /:acronym
