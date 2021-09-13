@@ -3,6 +3,7 @@ const router = express.Router();
 const Acronym = require("../../models/acronym");
 const Users = require("../../models/users");
 const hydrate = require("../hydrate");
+
 const {
     createAcronym,
     getAcronym,
@@ -66,30 +67,28 @@ router.get("/:acronym", getEntry, async (req, res) => {
     await res.send(res.acronym);
 });
 
+function escapeRegex(string) {
+    return string.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
+
 // GET /acronym?from=50&limit=10&search=:search
 // ▶ returns a list of acronyms, paginated using query parameters
 // ▶ response headers indicate if there are more results
 // ▶ returns all acronyms that fuzzy match against :search
 // router.get("/acronym?", async (req, res) => {
 router.get("/list/acronym", async (req, res) => {
-    let limit = parseInt(req.query.limit);
-    let startIdex = parseInt(req.query.from);
-    let endIdex = parseInt(req.query.from + limit);
-    let searchQuery = req.query.search;
-    fuzzySearch = searchQuery;
-
     try {
-        console.log(req.params);
-        console.log(limit);
-        console.log(startIdex);
-        console.log(endIdex);
-        console.log(searchQuery);
-        const acronyms = await Acronym.find()
-            .sort(searchQuery)
-            .skip(startIdex)
-            .limit(limit)
-            .exec()
-            .next();
+        let fuzzyString = new RegExp(escapeRegex(req.query.search), "gi");
+        // let limit = parseInt(req.query.limit);
+        // let startIndex = parseInt(req.query.from);
+        // let searchQuery = req.query.search;
+        // console.log("limit", limit);
+        // console.log("startIndex", startIndex);
+        // console.log("search query: ", searchQuery);
+
+        const acronyms = await Acronym.find({ acronym: fuzzyString })
+            .skip(parseInt(req.query.fo))
+            .limit(parseInt(req.query.limit));
         res.json(acronyms);
         res.status(200).json({ message: "Search results paginated" });
         res.send("hello!");

@@ -1,7 +1,4 @@
-GET http://localhost:3000/acronyms/list/acronym?from=50&limit=10&search=LOL
-
-
-
+GET http://localhost:3000/acronyms/list/acronym?from=5&limit=5&search=W
 
 //WORKING FINE:
 ###
