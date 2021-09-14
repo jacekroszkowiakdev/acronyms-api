@@ -17,6 +17,10 @@ module.exports.createAcronym = async (acronym, fullForm) => {
     return entry;
 };
 
+module.exports.getRandom = async (sample) => {
+    await Acronym.aggregate([{ $sample: { size: sample } }]);
+};
+
 module.exports.updateDefinition = async (acronymPrefix, newDefinition) => {
     await Acronym.findOneAndUpdate(acronymPrefix, newDefinition);
 };

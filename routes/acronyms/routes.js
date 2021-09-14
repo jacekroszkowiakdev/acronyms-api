@@ -3,30 +3,15 @@ const router = express.Router();
 const Acronym = require("../../models/acronym");
 const Users = require("../../models/users");
 const hydrate = require("../hydrate");
-
 const {
     createAcronym,
-    getAcronym,
+    getRandom,
     listAcronyms,
     paginateAcronyms,
     updateDefinition,
     deleteAcronym,
 } = require("./selectors");
-
-// get single entry helper
-const getEntry = async (req, res, next) => {
-    let entry;
-    try {
-        entry = await getAcronym(req.params.acronym);
-        if (entry === null) {
-            return res.status(404).json({ message: "Entry does not exists" });
-        }
-    } catch (err) {
-        return res.status(500).json({ message: err.message });
-    }
-    res.acronym = entry;
-    next();
-};
+const getEntry = require("./middleware");
 
 // hydrate DB
 router.get("/hydrate", async (req, res) => {
@@ -36,6 +21,12 @@ router.get("/hydrate", async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
+});
+
+// // req.isAuthenticated is provided from the auth router
+router.get("/", (req, res) => {
+    console.log(req.oidc.isAuthenticated());
+    // res.send(req.oidc.isAuthenticated() ? "Logged in" : "Logged out");
 });
 
 // POST /acronym
@@ -51,8 +42,8 @@ router.post("/", async (req, res) => {
     }
 });
 
-// GET /
-router.get("/", async (req, res) => {
+// GET /all
+router.get("/all", async (req, res) => {
     try {
         const acronyms = await listAcronyms();
         res.json(acronyms);
@@ -81,6 +72,7 @@ router.get("/list/acronym", async (req, res) => {
         let fuzzyString = new RegExp(escapeRegex(req.query.search), "gi");
         // let limit = parseInt(req.query.limit);
         // let startIndex = parseInt(req.query.from);
+        // let endIndex = startIndex + limit;
         // let searchQuery = req.query.search;
         // console.log("limit", limit);
         // console.log("startIndex", startIndex);
@@ -89,7 +81,14 @@ router.get("/list/acronym", async (req, res) => {
         const acronyms = await Acronym.find({ acronym: fuzzyString })
             .skip(parseInt(req.query.fo))
             .limit(parseInt(req.query.limit));
-        res.json(acronyms);
+
+        // const searchResults = {};
+        // acronyms.results = acronyms.slice(
+        //     req.query.from,
+        //     req.query.from + req.query.limit
+        // );
+        console.log("results: ", acronyms.results);
+        res.json(acronyms.results);
         res.status(200).json({ message: "Search results paginated" });
         res.send("hello!");
     } catch (err) {
@@ -100,10 +99,10 @@ router.get("/list/acronym", async (req, res) => {
 // GET /random/:count?
 router.get("/random/:count?", async (req, res) => {
     try {
-        let sampleSize = parseInt(req.query.sample);
-        const randomAcronyms = await Acronym.aggregate([
-            { $sample: { size: sampleSize } },
-        ]);
+        // const randomAcronyms = await Acronym.aggregate([
+        //     { $sample: { size: parseInt(req.query.sample) } },
+        // ]);
+        const randomAcronyms = await getRandom(parseInt(req.query.sample));
         res.json(randomAcronyms);
         res.status(200).json({ message: "Random DB entries downloaded" });
     } catch (err) {
