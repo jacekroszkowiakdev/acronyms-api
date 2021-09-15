@@ -10,7 +10,7 @@ GET http://localhost:3000/acronyms/all
 GET http://localhost:3000/acronyms/hydrate
 
 ###
-GET http://localhost:3000/acronyms/Sample Acronym
+GET http://localhost:3000/acronyms/Sample123
 
 ###
 GET http://localhost:3000/acronyms/random/5
@@ -20,8 +20,8 @@ POST http://localhost:3000/acronyms/
 Content-Type: application/json
 
 {
-    "acronym": "Sample Acronym",
-    "fullForm": "sample"
+    "acronym": "Sample123",
+    "fullForm": "fresh sample"
 }
 
 ###
@@ -33,5 +33,5 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/acronyms/Sample Acronym
+DELETE http://localhost:3000/acronyms/Sample123
 

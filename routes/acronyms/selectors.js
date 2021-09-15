@@ -17,13 +17,11 @@ module.exports.createAcronym = async (acronym, fullForm) => {
     return entry;
 };
 
-module.exports.getRandom = async (sample) => {
+module.exports.getRandom = async (sample) =>
     await Acronym.aggregate([{ $sample: { size: sample } }]);
-};
 
-module.exports.updateDefinition = async (acronymPrefix, newDefinition) => {
+module.exports.updateDefinition = async (acronymPrefix, newDefinition) =>
     await Acronym.findOneAndUpdate(acronymPrefix, newDefinition);
-};
 
 module.exports.deleteAcronym = async (acronymString) =>
     await Acronym.findOneAndDelete({ acronym: acronymString });

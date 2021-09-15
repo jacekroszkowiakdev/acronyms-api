@@ -12,6 +12,7 @@ const {
     deleteAcronym,
 } = require("./selectors");
 const getEntry = require("./middleware");
+const { requiresAuth } = require("express-openid-connect");
 
 // hydrate DB
 router.get("/hydrate", async (req, res) => {
@@ -26,7 +27,11 @@ router.get("/hydrate", async (req, res) => {
 // // req.isAuthenticated is provided from the auth router
 router.get("/", (req, res) => {
     console.log(req.oidc.isAuthenticated());
-    // res.send(req.oidc.isAuthenticated() ? "Logged in" : "Logged out");
+    res.send(req.oidc.isAuthenticated() ? "Logged in" : "Logged out");
+});
+
+router.get("/profile", requiresAuth(), (req, res) => {
+    res.send(JSON.stringify(req.oidc.user));
 });
 
 // POST /acronym
@@ -46,8 +51,7 @@ router.post("/", async (req, res) => {
 router.get("/all", async (req, res) => {
     try {
         const acronyms = await listAcronyms();
-        res.json(acronyms);
-        res.status(200).json({ message: "all entries downloaded" });
+        res.status(200).json(acronyms);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -90,7 +94,6 @@ router.get("/list/acronym", async (req, res) => {
         console.log("results: ", acronyms.results);
         res.json(acronyms.results);
         res.status(200).json({ message: "Search results paginated" });
-        res.send("hello!");
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -100,13 +103,8 @@ router.get("/list/acronym", async (req, res) => {
 router.get("/random/:count?", async (req, res) => {
     try {
         let sampleSize = parseInt(req.params.count);
-        console.log(sampleSize);
-        // const randomAcronyms = await Acronym.aggregate([
-        //     { $sample: { size: sampleSize } },
-        // ]);
         const randomAcronyms = await getRandom(sampleSize);
-        res.json(randomAcronyms);
-        res.status(200).json({ message: "Random DB entries downloaded" });
+        res.status(200).json(randomAcronyms);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
