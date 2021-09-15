@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const Acronym = require("../../models/acronym");
-const Users = require("../../models/users");
 const hydrate = require("../hydrate");
 const {
     createAcronym,
@@ -26,7 +25,9 @@ router.get("/hydrate", async (req, res) => {
 
 // // req.isAuthenticated is provided from the auth router
 router.get("/", (req, res) => {
-    console.log(req.oidc.isAuthenticated());
+    console.log(req.oidc.accessToken);
+    console.log(req.oidc.idToken);
+
     res.send(req.oidc.isAuthenticated() ? "Logged in" : "Logged out");
 });
 
@@ -35,7 +36,7 @@ router.get("/profile", requiresAuth(), (req, res) => {
 });
 
 // POST /acronym
-router.post("/", async (req, res) => {
+router.post("/acronyms/", async (req, res) => {
     try {
         const newAcronymEntry = await createAcronym(
             req.body.acronym,
@@ -48,7 +49,7 @@ router.post("/", async (req, res) => {
 });
 
 // GET /all
-router.get("/all", async (req, res) => {
+router.get("/acronyms/all", async (req, res) => {
     try {
         const acronyms = await listAcronyms();
         res.status(200).json(acronyms);
@@ -58,7 +59,7 @@ router.get("/all", async (req, res) => {
 });
 
 // GET /:acronym
-router.get("/:acronym", getEntry, async (req, res) => {
+router.get("/acronyms/:acronym", getEntry, async (req, res) => {
     await res.send(res.acronym);
 });
 
@@ -71,7 +72,7 @@ function escapeRegex(string) {
 // ▶ response headers indicate if there are more results
 // ▶ returns all acronyms that fuzzy match against :search
 // router.get("/acronym?", async (req, res) => {
-router.get("/list/acronym", async (req, res) => {
+router.get("/acronyms/list/acronym", async (req, res) => {
     try {
         let fuzzyString = new RegExp(escapeRegex(req.query.search), "gi");
         // let limit = parseInt(req.query.limit);
@@ -100,7 +101,7 @@ router.get("/list/acronym", async (req, res) => {
 });
 
 // GET /random/:count?
-router.get("/random/:count?", async (req, res) => {
+router.get("/acronyms/random/:count?", async (req, res) => {
     try {
         let sampleSize = parseInt(req.params.count);
         const randomAcronyms = await getRandom(sampleSize);
@@ -114,7 +115,7 @@ router.get("/random/:count?", async (req, res) => {
 // ▶ receives an acronym and definition strings
 // ▶ uses an authorization header to ensure acronyms are protected
 // ▶ updates the acronym definition to the db for :acronym
-router.put("/:acronym", getEntry, async (req, res) => {
+router.put("/acronyms/:acronym", getEntry, async (req, res) => {
     try {
         let entry;
         let acronym = req.params;
@@ -132,7 +133,7 @@ router.put("/:acronym", getEntry, async (req, res) => {
 });
 
 // DELETE /:acronym
-router.delete("/:acronym", async (req, res) => {
+router.delete("/acronyms/:acronym", async (req, res) => {
     let entry;
     let acronym = req.params.acronym;
     try {

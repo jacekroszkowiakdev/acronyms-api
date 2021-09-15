@@ -1,6 +1,11 @@
 GET http://localhost:3000/acronyms/list/acronym?from=40&limit=2&search=A
 ###
-GET http://localhost:3000/acronyms/
+GET http://localhost:3000/login
+###
+GET http://localhost:3000/logout
+###
+GET http://localhost:3000/profile
+
 
 //WORKING FINE
 ###
