@@ -99,10 +99,12 @@ router.get("/list/acronym", async (req, res) => {
 // GET /random/:count?
 router.get("/random/:count?", async (req, res) => {
     try {
+        let sampleSize = parseInt(req.params.count);
+        console.log(sampleSize);
         // const randomAcronyms = await Acronym.aggregate([
-        //     { $sample: { size: parseInt(req.query.sample) } },
+        //     { $sample: { size: sampleSize } },
         // ]);
-        const randomAcronyms = await getRandom(parseInt(req.query.sample));
+        const randomAcronyms = await getRandom(sampleSize);
         res.json(randomAcronyms);
         res.status(200).json({ message: "Random DB entries downloaded" });
     } catch (err) {
@@ -115,9 +117,11 @@ router.get("/random/:count?", async (req, res) => {
 // ▶ uses an authorization header to ensure acronyms are protected
 // ▶ updates the acronym definition to the db for :acronym
 router.put("/:acronym", getEntry, async (req, res) => {
-    let entry;
     try {
-        entry = await updateDefinition(req.params, req.body);
+        let entry;
+        let acronym = req.params;
+        let definition = req.body;
+        entry = await updateDefinition(acronym, definition);
         if (entry === null) {
             return res
                 .status(404)
@@ -132,8 +136,9 @@ router.put("/:acronym", getEntry, async (req, res) => {
 // DELETE /:acronym
 router.delete("/:acronym", async (req, res) => {
     let entry;
+    let acronym = req.params.acronym;
     try {
-        entry = await deleteAcronym(req.params.acronym);
+        entry = await deleteAcronym(acronym);
         if (entry === null) {
             return res
                 .status(404)

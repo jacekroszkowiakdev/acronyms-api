@@ -13,7 +13,7 @@ GET http://localhost:3000/acronyms/hydrate
 GET http://localhost:3000/acronyms/Sample Acronym
 
 ###
-GET http://localhost:3000/acronyms/random/count?sample=5
+GET http://localhost:3000/acronyms/random/5
 
 ###
 POST http://localhost:3000/acronyms/
@@ -29,7 +29,7 @@ PUT http://localhost:3000/acronyms/Sample Acronym
 Content-Type: application/json
 
 {
-    "fullForm": "Update Test Dodawania Akronimu do DB"
+    "fullForm": "Updated Test Dodawania Akronimu do DB"
 }
 
 ###
