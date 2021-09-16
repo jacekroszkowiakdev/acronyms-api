@@ -9,9 +9,14 @@ const {
     paginateAcronyms,
     updateDefinition,
     deleteAcronym,
+    createUser,
 } = require("./selectors");
 const getEntry = require("./middleware");
-const { requiresAuth } = require("express-openid-connect");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+const User = require("../../models/users");
+const compare = bcrypt.compare;
+const hash = bcrypt.hash;
 
 // hydrate DB
 router.get("/hydrate", async (req, res) => {
@@ -23,18 +28,6 @@ router.get("/hydrate", async (req, res) => {
     }
 });
 
-// // req.isAuthenticated is provided from the auth router
-router.get("/", (req, res) => {
-    console.log(req.oidc.accessToken);
-    console.log(req.oidc.idToken);
-
-    res.send(req.oidc.isAuthenticated() ? "Logged in" : "Logged out");
-});
-
-router.get("/profile", requiresAuth(), (req, res) => {
-    res.send(JSON.stringify(req.oidc.user));
-});
-
 // POST /acronym
 router.post("/acronyms/", async (req, res) => {
     try {
@@ -43,6 +36,18 @@ router.post("/acronyms/", async (req, res) => {
             req.body.fullForm
         );
         res.status(201).json(newAcronymEntry);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// POST/register
+router.post("/acronyms/register/", async (req, res) => {
+    try {
+        const { username, password, role } = req.body;
+        hashedPassword = await bcrypt.hash(password, saltRounds);
+        const newUser = await createUser(username, hashedPassword, role);
+        res.status(201).json(newUser);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -93,8 +98,7 @@ router.get("/acronyms/list/acronym", async (req, res) => {
         //     req.query.from + req.query.limit
         // );
         console.log("results: ", acronyms.results);
-        res.json(acronyms.results);
-        res.status(200).json({ message: "Search results paginated" });
+        res.status(200).json(acronyms.results);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

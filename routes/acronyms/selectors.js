@@ -1,4 +1,5 @@
 const Acronym = require("../../models/acronym");
+const User = require("../../models/users");
 
 module.exports.getAcronym = async (acronymPrefix) =>
     await Acronym.findOne({ acronym: acronymPrefix });
@@ -25,3 +26,13 @@ module.exports.updateDefinition = async (acronymPrefix, newDefinition) =>
 
 module.exports.deleteAcronym = async (acronymString) =>
     await Acronym.findOneAndDelete({ acronym: acronymString });
+
+module.exports.createUser = async (username, password, role) => {
+    const entry = new User({
+        username,
+        password,
+        role,
+    });
+    await entry.save();
+    return entry;
+};

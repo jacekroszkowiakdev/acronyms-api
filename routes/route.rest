@@ -4,7 +4,14 @@ GET http://localhost:3000/login
 ###
 GET http://localhost:3000/logout
 ###
-GET http://localhost:3000/profile
+POST http://localhost:3000/acronyms/register
+Content-Type: application/json
+
+{
+    "username": "TestUser123",
+    "password": "TestPassword",
+    "role": "admin"
+}
 
 
 //WORKING FINE
@@ -30,11 +37,11 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:3000/acronyms/Sample Acronym
+PUT http://localhost:3000/acronyms/Sample123
 Content-Type: application/json
 
 {
-    "fullForm": "Updated Test Dodawania Akronimu do DB"
+    "fullForm": "Updated def"
 }
 
 ###
