@@ -10,6 +10,7 @@ const {
     updateDefinition,
     deleteAcronym,
     createUser,
+    getUser,
 } = require("./selectors");
 const getEntry = require("./middleware");
 const bcrypt = require("bcrypt");
@@ -17,6 +18,22 @@ const saltRounds = 10;
 const User = require("../../models/users");
 const compare = bcrypt.compare;
 const hash = bcrypt.hash;
+const jwt = require("jsonwebtoken");
+
+// check Headers
+
+const checkToken = (req, res, next) => {
+    const header = req.headers["authorization"];
+
+    if (typeof header !== "undefined") {
+        const bearer = header.split(" ");
+        const token = bearer[1];
+        req.token = token;
+        next();
+    } else {
+        res.sendStatus(403);
+    }
+};
 
 // hydrate DB
 router.get("/hydrate", async (req, res) => {
@@ -41,13 +58,43 @@ router.post("/acronyms/", async (req, res) => {
     }
 });
 
-// POST/register
+// POST /register
 router.post("/acronyms/register/", async (req, res) => {
     try {
         const { username, password, role } = req.body;
-        hashedPassword = await bcrypt.hash(password, saltRounds);
+        hashedPassword = await hash(password, saltRounds);
         const newUser = await createUser(username, hashedPassword, role);
         res.status(201).json(newUser);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// POST /login
+router.post("/acronyms/login/", async (req, res) => {
+    try {
+        // const { username, password } = req.body;
+        let username = req.body.username;
+        let password = req.body.password;
+        const userData = await getUser(username);
+        compare(userData.password, password);
+        console.log("passwords match: ", !!compare);
+        if (compare) {
+            jwt.sign(
+                { user },
+                "privatekey",
+                { expiresIn: "1h" },
+                (err, token) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    res.send(token);
+                }
+            );
+        } else {
+            console.log("Error - could not perform login");
+        }
+        res.status(201).json({ message: userData.password });
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -137,10 +184,23 @@ router.put("/acronyms/:acronym", getEntry, async (req, res) => {
 });
 
 // DELETE /:acronym
-router.delete("/acronyms/:acronym", async (req, res) => {
-    let entry;
-    let acronym = req.params.acronym;
+router.delete("/acronyms/:acronym", checkToken, async (req, res) => {
+    jwt.verify(req.token, "privatekey", (err, authorizedData) => {
+        if (err) {
+            console.log("User unauthorized");
+            res.sendStatus(403);
+        } else {
+            res.json({
+                message: "Successful log in",
+                authorizedData,
+            });
+            console.log("Authorized user connected to protected route");
+        }
+    });
+
     try {
+        let entry;
+        let acronym = req.params.acronym;
         entry = await deleteAcronym(acronym);
         if (entry === null) {
             return res

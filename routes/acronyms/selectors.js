@@ -36,3 +36,6 @@ module.exports.createUser = async (username, password, role) => {
     await entry.save();
     return entry;
 };
+
+module.exports.getUser = async (userLogin) =>
+    await User.findOne({ username: userLogin });

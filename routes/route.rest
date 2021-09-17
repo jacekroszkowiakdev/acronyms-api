@@ -1,20 +1,28 @@
 GET http://localhost:3000/acronyms/list/acronym?from=40&limit=2&search=A
 ###
-GET http://localhost:3000/login
+POST http://localhost:3000/acronyms/login/
+Content-Type: application/json
+
+{
+    "username": "TestUser1",
+    "password": "TestPassword"
+}
+
 ###
 GET http://localhost:3000/logout
+
+
+//WORKING FINE
 ###
 POST http://localhost:3000/acronyms/register
 Content-Type: application/json
 
 {
-    "username": "TestUser123",
+    "username": "TestUser1",
     "password": "TestPassword",
     "role": "admin"
 }
 
-
-//WORKING FINE
 ###
 GET http://localhost:3000/acronyms/all
 
