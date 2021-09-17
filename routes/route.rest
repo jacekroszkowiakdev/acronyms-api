@@ -1,4 +1,7 @@
 GET http://localhost:3000/acronyms/list/acronym?from=40&limit=2&search=A
+
+
+//WORKING FINE
 ###
 POST http://localhost:3000/acronyms/login/
 Content-Type: application/json
@@ -8,11 +11,6 @@ Content-Type: application/json
     "password": "TestPassword"
 }
 
-###
-GET http://localhost:3000/logout
-
-
-//WORKING FINE
 ###
 POST http://localhost:3000/acronyms/register
 Content-Type: application/json
@@ -45,7 +43,8 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:3000/acronyms/Sample123
+PUT http://localhost:3000/acronyms/10X
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiVGVzdFVzZXIxIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjMxODkwMzE1fQ.RD8ISbjd9LfB9RHo8Z3U795c9JHLeMFM1m7AK_Os1Xw
 Content-Type: application/json
 
 {
@@ -53,5 +52,5 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/acronyms/Sample123
-
+DELETE http://localhost:3000/acronyms/LOL
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiVGVzdFVzZXIxIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjMxODkwMzE1fQ.RD8ISbjd9LfB9RHo8Z3U795c9JHLeMFM1m7AK_Os1Xw

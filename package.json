@@ -4,7 +4,7 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-        "start": "node ./bin/www",
+        "debug": "node --inspect-brk ./app.js",
         "devstart": "nodemon ./app.js"
     },
     "author": "",
