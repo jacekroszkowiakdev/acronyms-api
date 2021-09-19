@@ -4,7 +4,11 @@ const User = require("../../models/users");
 module.exports.getAcronym = async (acronymPrefix) =>
     await Acronym.findOne({ acronym: acronymPrefix });
 
-module.exports.listAcronyms = async () => await Acronym.find();
+// module.exports.listAcronyms = async () => await Acronym.find();
+module.exports.listAcronyms = async (query) =>
+    query === undefined
+        ? await Acronym.find()
+        : await Acronym.find({ acronym: query });
 
 module.exports.getPaginatedResults = async (acronymPrefix, startIdx, sample) =>
     await Acronym.find({ acronym: acronymPrefix }).skip(startIdx).limit(sample);

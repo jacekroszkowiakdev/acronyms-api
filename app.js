@@ -2,8 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const port = 3000;
-const { auth } = require("express-openid-connect");
-const bodyParser = require("body-parser");
 
 // set up the DB
 const mongoose = require("mongoose");

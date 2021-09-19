@@ -65,7 +65,7 @@ router.post("/acronyms/login/", async (req, res) => {
         }
         const token = jwt.sign(
             { user: userData.username, role: userData.role },
-            "privatekey" // export to .env afer
+            process.env.SECRET
         );
         res.status(201).json({
             token,
@@ -103,13 +103,18 @@ router.get("/acronyms/list/acronym", async (req, res) => {
         let fuzzyQuery = new RegExp(escapeRegex(req.query.search), "gi");
         let startIndex = parseInt(req.query.from);
         let limit = parseInt(req.query.limit);
+        const allResults = await listAcronyms(fuzzyQuery);
         const paginatedResults = await getPaginatedResults(
             fuzzyQuery,
             startIndex,
             limit
         );
-        console.log("res: ", res, res.headers);
-        res.status(200).json(paginatedResults);
+        let pagesCount = Math.ceil(allResults.length / limit);
+        res.set("result-pages", pagesCount);
+        res.status(200).json({
+            "total pages": pagesCount,
+            results: paginatedResults,
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
