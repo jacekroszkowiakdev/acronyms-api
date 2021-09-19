@@ -5,7 +5,6 @@ const auth = (req, res, next) => {
     console.log(req.headers);
     if (bearerHeader) {
         const bearer = bearerHeader.split(" ");
-        console.log(bearer);
         const bearerToken = bearer[1];
         req.token = bearerToken;
         next();

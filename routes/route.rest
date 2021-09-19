@@ -1,7 +1,5 @@
-GET http://localhost:3000/acronyms/list/acronym?from=40&limit=2&search=A
+GET http://localhost:3000/acronyms/list/acronym?from=50&limit=10&search=W
 
-
-//WORKING FINE
 ###
 POST http://localhost:3000/acronyms/register
 Content-Type: application/json
@@ -28,7 +26,7 @@ GET http://localhost:3000/acronyms/all
 GET http://localhost:3000/acronyms/hydrate
 
 ###
-GET http://localhost:3000/acronyms/Sample123
+GET http://localhost:3000/acronyms/SampleACRONYM
 
 ###
 GET http://localhost:3000/acronyms/random/5
@@ -38,12 +36,12 @@ POST http://localhost:3000/acronyms/
 Content-Type: application/json
 
 {
-    "acronym": "Sample123",
-    "fullForm": "fresh sample"
+    "acronym": "SampleACRONYM",
+    "fullForm": "sample definition"
 }
 
 ###
-PUT http://localhost:3000/acronyms/10X
+PUT http://localhost:3000/acronyms/SampleACRONYM
 Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiVGVzdFVzZXIxIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjMxODkwMzE1fQ.RD8ISbjd9LfB9RHo8Z3U795c9JHLeMFM1m7AK_Os1Xw
 Content-Type: application/json
 
@@ -52,5 +50,5 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/acronyms/LOL
+DELETE http://localhost:3000/acronyms/AFK
 Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiVGVzdFVzZXIxIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjMxODkwMzE1fQ.RD8ISbjd9LfB9RHo8Z3U795c9JHLeMFM1m7AK_Os1Xw

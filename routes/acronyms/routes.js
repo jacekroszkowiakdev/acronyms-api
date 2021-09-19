@@ -1,12 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const Acronym = require("../../models/acronym");
 const hydrate = require("../hydrate");
 const {
     createAcronym,
     getRandom,
     listAcronyms,
-    paginateAcronyms,
+    getPaginatedResults,
     updateDefinition,
     deleteAcronym,
     createUser,
@@ -101,19 +100,16 @@ function escapeRegex(string) {
 // ▶ returns all acronyms that fuzzy match against :search
 router.get("/acronyms/list/acronym", async (req, res) => {
     try {
-        let fuzzyString = new RegExp(escapeRegex(req.query.search), "gi");
-        let limit = parseInt(req.query.limit);
+        let fuzzyQuery = new RegExp(escapeRegex(req.query.search), "gi");
         let startIndex = parseInt(req.query.from);
-        let endIndex = startIndex + limit;
-        let searchQuery = req.query.search;
-        console.log("limit", limit);
-        console.log("startIndex", startIndex);
-        console.log("search query: ", searchQuery);
-
-        const acronyms = await Acronym.find({ acronym: fuzzyString })
-            .skip(parseInt(req.query.from))
-            .limit(parseInt(req.query.limit));
-        res.status(200).json(acronyms);
+        let limit = parseInt(req.query.limit);
+        const paginatedResults = await getPaginatedResults(
+            fuzzyQuery,
+            startIndex,
+            limit
+        );
+        console.log("res: ", res, res.headers);
+        res.status(200).json(paginatedResults);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -131,9 +127,6 @@ router.get("/acronyms/random/:count?", async (req, res) => {
 });
 
 // PUT /:acronym
-// ▶ receives an acronym and definition strings
-// ▶ uses an authorization header to ensure acronyms are protected
-// ▶ updates the acronym definition to the db for :acronym
 router.put("/acronyms/:acronym", tokenAuth, getEntry, async (req, res) => {
     try {
         let entry;
