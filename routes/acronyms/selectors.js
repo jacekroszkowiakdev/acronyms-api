@@ -27,9 +27,6 @@ module.exports.getRandom = async (sample) =>
 module.exports.updateDefinition = async (acronymPrefix, newDefinition) =>
     await Acronym.findOneAndUpdate(acronymPrefix, newDefinition);
 
-// module.exports.deleteAcronym = async (acronymString) =>
-//     await Acronym.findOneAndDelete({ acronym: acronymString });
-
 module.exports.deleteAcronym = async (acronymString) =>
     await Acronym.deleteMany({ acronym: acronymString });
 

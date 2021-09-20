@@ -20,14 +20,13 @@ const jwt = require("jsonwebtoken");
 const tokenAuth = require("../../auth");
 
 // hydrate DB
-router.get("/hydrate", async (req, res) => {
+router.get("/acronyms/hydrate", async (req, res) => {
     try {
         await hydrate();
         res.status(200).json({ message: "DB hydrated!" });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
-    s;
 });
 
 // POST /acronym
@@ -92,12 +91,12 @@ router.get("/acronyms/all", async (req, res) => {
 router.get("/acronyms/:acronym", async (req, res) => {
     try {
         const query = req.params.acronym;
-        const acronym = await listAcronyms(query);
-        console.log(acronym);
-        if (!acronym) {
+        const acronyms = await listAcronyms(query);
+        console.log(acronyms);
+        if (acronyms === null) {
             return res.status(404).json({ message: "Entry does not exists" });
         }
-        res.status(200).json(acronym);
+        res.status(200).json(acronyms);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -157,22 +156,6 @@ router.put("/acronyms/:acronym", tokenAuth, getEntry, async (req, res) => {
     }
     res.send("Acronym definition updated");
 });
-
-// // DELETE /:acronym
-// router.delete("/acronyms/:acronym", tokenAuth, async (req, res) => {
-//     try {
-//         let acronym = req.params.acronym;
-//         entry = await deleteAcronym(acronym);
-//         if (entry === null) {
-//             return res
-//                 .status(404)
-//                 .json({ message: "Entry does not exists in DB" });
-//         }
-//     } catch (err) {
-//         return res.status(500).json({ message: err.message });
-//     }
-//     res.status(200).send("Acronym deleted");
-// });
 
 // DELETE /:acronym
 router.delete("/acronyms/:acronym", tokenAuth, async (req, res) => {
