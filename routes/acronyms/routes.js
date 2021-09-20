@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const hydrate = require("../hydrate");
+const hydrate = require("./hydrate");
 const {
     createAcronym,
     getRandom,
@@ -27,6 +27,7 @@ router.get("/hydrate", async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
+    s;
 });
 
 // POST /acronym
@@ -48,7 +49,9 @@ router.post("/acronyms/register/", async (req, res) => {
         const { username, password, role } = req.body;
         hashedPassword = await hash(password, saltRounds);
         const newUser = await createUser(username, hashedPassword, role);
-        res.status(201).json(`${newUser.username} added to users DB`);
+        res.status(201).json({
+            message: `${newUser.username} added to users DB`,
+        });
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -86,30 +89,36 @@ router.get("/acronyms/all", async (req, res) => {
 });
 
 // GET /:acronym
-router.get("/acronyms/:acronym", getEntry, async (req, res) => {
-    await res.send(res.acronym);
+router.get("/acronyms/:acronym", async (req, res) => {
+    try {
+        const query = req.params.acronym;
+        const acronym = await listAcronyms(query);
+        console.log(acronym);
+        if (!acronym) {
+            return res.status(404).json({ message: "Entry does not exists" });
+        }
+        res.status(200).json(acronym);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
-function escapeRegex(string) {
-    return string.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-}
-
 // GET /acronym?from=50&limit=10&search=:search
-// ▶ returns a list of acronyms, paginated using query parameters
-// ▶ response headers indicate if there are more results
-// ▶ returns all acronyms that fuzzy match against :search
 router.get("/acronyms/list/acronym", async (req, res) => {
+    function escapeRegex(string) {
+        return string.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    }
     try {
-        let fuzzyQuery = new RegExp(escapeRegex(req.query.search), "gi");
-        let startIndex = parseInt(req.query.from);
-        let limit = parseInt(req.query.limit);
+        const fuzzyQuery = new RegExp(escapeRegex(req.query.search), "gi");
+        const startIndex = parseInt(req.query.from);
+        const limit = parseInt(req.query.limit);
         const allResults = await listAcronyms(fuzzyQuery);
         const paginatedResults = await getPaginatedResults(
             fuzzyQuery,
             startIndex,
             limit
         );
-        let pagesCount = Math.ceil(allResults.length / limit);
+        const pagesCount = Math.ceil(allResults.length / limit);
         res.set("result-pages", pagesCount);
         res.status(200).json({
             "total pages": pagesCount,
@@ -149,12 +158,27 @@ router.put("/acronyms/:acronym", tokenAuth, getEntry, async (req, res) => {
     res.send("Acronym definition updated");
 });
 
+// // DELETE /:acronym
+// router.delete("/acronyms/:acronym", tokenAuth, async (req, res) => {
+//     try {
+//         let acronym = req.params.acronym;
+//         entry = await deleteAcronym(acronym);
+//         if (entry === null) {
+//             return res
+//                 .status(404)
+//                 .json({ message: "Entry does not exists in DB" });
+//         }
+//     } catch (err) {
+//         return res.status(500).json({ message: err.message });
+//     }
+//     res.status(200).send("Acronym deleted");
+// });
+
 // DELETE /:acronym
 router.delete("/acronyms/:acronym", tokenAuth, async (req, res) => {
     try {
-        let entry;
         let acronym = req.params.acronym;
-        entry = await deleteAcronym(acronym);
+        let entry = await deleteAcronym(acronym);
         if (entry === null) {
             return res
                 .status(404)

@@ -1,4 +1,4 @@
-GET http://localhost:3000/acronyms/list/acronym?from=50&limit=10&search=W
+GET http://localhost:3000/acronyms/list/acronym?from=50&limit=10&search=A
 
 ###
 POST http://localhost:3000/acronyms/register
@@ -50,5 +50,5 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/acronyms/AFK
+DELETE http://localhost:3000/acronyms/SampleACRONYM
 Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiVGVzdFVzZXIxIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjMxODkwMzE1fQ.RD8ISbjd9LfB9RHo8Z3U795c9JHLeMFM1m7AK_Os1Xw

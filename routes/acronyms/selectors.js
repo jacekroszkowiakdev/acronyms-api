@@ -4,7 +4,6 @@ const User = require("../../models/users");
 module.exports.getAcronym = async (acronymPrefix) =>
     await Acronym.findOne({ acronym: acronymPrefix });
 
-// module.exports.listAcronyms = async () => await Acronym.find();
 module.exports.listAcronyms = async (query) =>
     query === undefined
         ? await Acronym.find()
@@ -28,8 +27,11 @@ module.exports.getRandom = async (sample) =>
 module.exports.updateDefinition = async (acronymPrefix, newDefinition) =>
     await Acronym.findOneAndUpdate(acronymPrefix, newDefinition);
 
+// module.exports.deleteAcronym = async (acronymString) =>
+//     await Acronym.findOneAndDelete({ acronym: acronymString });
+
 module.exports.deleteAcronym = async (acronymString) =>
-    await Acronym.findOneAndDelete({ acronym: acronymString });
+    await Acronym.deleteMany({ acronym: acronymString });
 
 module.exports.createUser = async (username, password, role) => {
     const entry = new User({
