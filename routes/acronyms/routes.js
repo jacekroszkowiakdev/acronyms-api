@@ -32,10 +32,9 @@ router.get("/acronyms/hydrate", async (req, res) => {
 // POST /acronym
 router.post("/acronyms/", async (req, res) => {
     try {
-        const newAcronymEntry = await createAcronym(
-            req.body.acronym,
-            req.body.fullForm
-        );
+        const acronym = req.body.acronym;
+        const definition = req.body.fullForm;
+        const newAcronymEntry = await createAcronym(acronym, definition);
         res.status(201).json(newAcronymEntry);
     } catch (err) {
         res.status(400).json({ message: err.message });
@@ -46,7 +45,7 @@ router.post("/acronyms/", async (req, res) => {
 router.post("/acronyms/register/", async (req, res) => {
     try {
         const { username, password, role } = req.body;
-        hashedPassword = await hash(password, saltRounds);
+        const hashedPassword = await hash(password, saltRounds);
         const newUser = await createUser(username, hashedPassword, role);
         res.status(201).json({
             message: `${newUser.username} added to users DB`,
@@ -130,7 +129,7 @@ router.get("/acronyms/list/acronym", async (req, res) => {
 // GET /random/:count?
 router.get("/acronyms/random/:count?", async (req, res) => {
     try {
-        let sampleSize = parseInt(req.params.count);
+        const sampleSize = parseInt(req.params.count);
         const randomAcronyms = await getRandom(sampleSize);
         res.status(200).json(randomAcronyms);
     } catch (err) {
@@ -141,10 +140,9 @@ router.get("/acronyms/random/:count?", async (req, res) => {
 // PUT /:acronym
 router.put("/acronyms/:acronym", tokenAuth, getEntry, async (req, res) => {
     try {
-        let entry;
-        let acronym = req.params;
-        let definition = req.body;
-        entry = await updateDefinition(acronym, definition);
+        const acronym = req.params;
+        const definition = req.body;
+        const entry = await updateDefinition(acronym, definition);
         if (entry === null) {
             return res
                 .status(404)
@@ -159,8 +157,8 @@ router.put("/acronyms/:acronym", tokenAuth, getEntry, async (req, res) => {
 // DELETE /:acronym
 router.delete("/acronyms/:acronym", tokenAuth, async (req, res) => {
     try {
-        let acronym = req.params.acronym;
-        let entry = await deleteAcronym(acronym);
+        const acronym = req.params.acronym;
+        const entry = await deleteAcronym(acronym);
         if (entry === null) {
             return res
                 .status(404)
