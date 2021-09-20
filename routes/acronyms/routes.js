@@ -92,8 +92,7 @@ router.get("/acronyms/:acronym", async (req, res) => {
     try {
         const query = req.params.acronym;
         const acronyms = await listAcronyms(query);
-        console.log(acronyms);
-        if (acronyms === null) {
+        if (acronyms && acronyms.length === 0) {
             return res.status(404).json({ message: "Entry does not exists" });
         }
         res.status(200).json(acronyms);
